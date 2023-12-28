@@ -64,3 +64,65 @@ This document provides an overview of the Transformer model architecture as deta
 - **Repeated Layers**: Decoder consists of multiple layers with the above structure.
 - **End Token**: Generation continues until an end-of-sequence token is generated or a maximum length is reached.
 
+# Data Flow and Learnable Parameters in a Transformer Model (GPT-3/GPT-4)
+
+This document summarizes the data flow and identifies the learnable parameters at each stage of a forward pass in a transformer model, specifically in the context of next token generation tasks like those performed by GPT-3 or GPT-4.
+
+## Summary of Steps and Parameters
+
+1. **Input Text & Tokenization**:
+   - Text input is tokenized into a sequence of tokens.
+   - No learnable parameters in tokenization.
+
+2. **Embedding Layer**:
+   - Each token is mapped to an embedding vector.
+   - Learnable Parameters: Embedding matrix mapping each token to its embedding.
+
+3. **Positional Encoding**:
+   - Positional encodings are added to the embeddings to provide order information.
+   - Typically no learnable parameters; fixed sinusoidal encodings are used.
+
+4. **Multi-Head Attention Mechanism**:
+   - Each embedding is transformed into Query (Q), Key (K), and Value (V) vectors for each attention head.
+   - Attention scores are calculated, scaled, and normalized (softmax).
+   - Attention is applied to Value vectors, and results are combined.
+   - Learnable Parameters: Separate Q, K, V linear transformation matrices for each head.
+
+5. **Concatenation and Linear Transformation After Attention**:
+   - Outputs from all heads are concatenated and linearly transformed.
+   - Learnable Parameters: Linear transformation matrix for processing concatenated output.
+
+6. **First Residual Connection**:
+   - Output of the multi-head attention is added to the original input embeddings.
+   - No learnable parameters in the residual connection.
+
+7. **First Layer Normalization**:
+   - Normalization of the combined output from the first residual connection.
+   - Learnable Parameters: Scale and shift parameters in the layer normalization.
+
+8. **Feed-Forward Neural Network (FFNN)**:
+   - Consists of two linear layers with a non-linear activation function in between.
+   - Learnable Parameters:
+     - First Linear Layer: Weights and biases, typically projecting to a higher-dimensional space.
+     - Non-Linear Activation Function (e.g., ReLU, GELU): No learnable parameters.
+     - Second Linear Layer: Weights and biases, projecting back to the original dimensionality.
+
+9. **Second Residual Connection**:
+   - Output of the FFNN is added back to its input (post-first layer normalization).
+   - No learnable parameters in the residual connection.
+
+10. **Second Layer Normalization**:
+    - Normalization of the combined output from the second residual connection.
+    - Learnable Parameters: Scale and shift parameters in the layer normalization.
+
+11. **Final Linear Layer for Token Generation**:
+    - Linear transformation of the output to match the vocabulary size.
+    - Learnable Parameters: Weights and biases in the final linear layer.
+
+12. **Softmax Layer**:
+    - Converts the output of the final linear layer into a probability distribution over the vocabulary.
+    - No learnable parameters in the softmax function.
+
+## Conclusion
+
+This overview provides a comprehensive understanding of the key stages and components in the forward pass of a transformer model like GPT-3 or GPT-4. It highlights the complex interplay of different elements that enable these models to perform sophisticated language tasks, from input processing to token generation.
